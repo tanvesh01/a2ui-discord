@@ -1,0 +1,2 @@
+include test_adapter.py
+recursive-include examples *.py

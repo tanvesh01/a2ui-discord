@@ -1,0 +1,22 @@
+{
+  "version": "1.0",
+  "createSurface": {
+    "surfaceId": "weekly-tickets",
+    "catalogId": "https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json",
+    "dataModel": {"view": ["attachment://bars.png"]},
+    "components": [
+      {"id": "root", "component": "Column", "children": ["chart", "style"]},
+      {
+        "id": "chart", "component": "Image", "url": {"@path": "/view/0"},
+        "description": "Resolved tickets in a sample week: Monday 18, Tuesday 27, Wednesday 21, Thursday 34, Friday 30."
+      },
+      {
+        "id": "style", "component": "ChoicePicker", "label": "Chart style", "value": {"@path": "/view"},
+        "options": [
+          {"label": "Bar chart", "value": "attachment://bars.png"},
+          {"label": "Line chart", "value": "attachment://line.png"}
+        ]
+      }
+    ]
+  }
+}

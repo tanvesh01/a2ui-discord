@@ -1,0 +1,37 @@
+{
+  "name": "a2ui-discord",
+  "version": "0.1.0-beta.3",
+  "description": "Render a subset of A2UI 1.0 as native Discord Components V2 messages",
+  "license": "MIT",
+  "author": "tanvesh01",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tanvesh01/a2ui-discord.git",
+    "directory": "typescript"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "type": "commonjs",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build",
+    "test": "npm run build && node --test test.mjs"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

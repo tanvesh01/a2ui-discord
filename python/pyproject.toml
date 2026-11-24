@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a2ui-discord"
+version = "0.1.0b3"
+description = "Render a subset of A2UI 1.0 as native Discord Components V2 messages"
+authors = [{ name = "tanvesh01" }]
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+readme = "README.md"
+keywords = ["a2ui", "discord", "components-v2"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3 :: Only",
+  "Typing :: Typed",
+]
+
+[project.urls]
+Repository = "https://github.com/tanvesh01/a2ui-discord"
+Issues = "https://github.com/tanvesh01/a2ui-discord/issues"
+
+[tool.setuptools]
+packages = ["a2ui_discord"]
+
+[tool.setuptools.package-data]
+a2ui_discord = ["py.typed"]

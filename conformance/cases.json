@@ -1,0 +1,130 @@
+[
+  {
+    "name": "audit card: render, select, edit, restore, dispatch, retire",
+    "create": {"version":"1.0","createSurface":{
+      "surfaceId":"quarterly-audit","catalogId":"https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json",
+      "dataModel":{"selected":[],"detail":"Choose a finding to inspect the evidence."},
+      "components":[
+        {"id":"root","component":"Column","children":["summary","picker","detail","review"]},
+        {"id":"summary","component":"Text","text":"## Quarterly audit\n3 open findings"},
+        {"id":"picker","component":"ChoicePicker","label":"Choose finding","value":{"@path":"/selected"},"options":[
+          {"label":"Missing owner","value":"owner"},{"label":"Backup restore untested","value":"backup"},{"label":"Key rotation overdue","value":"rotation"}]},
+        {"id":"detail","component":"Text","text":{"@path":"/detail"}},
+        {"id":"review","component":"Button","child":"review-label","variant":"primary","action":{"event":{"name":"reviewFinding","context":{"finding":{"@path":"/selected"}}}}},
+        {"id":"review-label","component":"Text","text":"Review finding"}
+      ]}},
+    "steps":[
+      ["message",{"flags":32768,"allowed_mentions":{"parse":[]},"components":[{"type":17,"components":[
+        {"type":10,"content":"## Quarterly audit\n3 open findings"},
+        {"type":1,"components":[{"type":3,"custom_id":"a2ui:picker","placeholder":"Choose finding","options":[
+          {"value":"owner","label":"Missing owner","default":false},{"value":"backup","label":"Backup restore untested","default":false},{"value":"rotation","label":"Key rotation overdue","default":false}]}]},
+        {"type":10,"content":"Choose a finding to inspect the evidence."},
+        {"type":1,"components":[{"type":2,"style":1,"custom_id":"a2ui:review","label":"Review finding"}]}
+      ]}]}],
+      ["rejectClick",{"component_type":3,"custom_id":"a2ui:picker","values":["not-a-finding"]}],
+      ["click",{"component_type":3,"custom_id":"a2ui:picker","values":["backup"]},null],
+      ["apply",{"version":"1.0","updateDataModel":{"surfaceId":"quarterly-audit","path":"/detail","value":"**Backup restore untested**\nThe March backup has no recorded restore test."}}],
+      ["restore"],
+      ["message",{"flags":32768,"allowed_mentions":{"parse":[]},"components":[{"type":17,"components":[
+        {"type":10,"content":"## Quarterly audit\n3 open findings"},
+        {"type":1,"components":[{"type":3,"custom_id":"a2ui:picker","placeholder":"Choose finding","options":[
+          {"value":"owner","label":"Missing owner","default":false},{"value":"backup","label":"Backup restore untested","default":true},{"value":"rotation","label":"Key rotation overdue","default":false}]}]},
+        {"type":10,"content":"**Backup restore untested**\nThe March backup has no recorded restore test."},
+        {"type":1,"components":[{"type":2,"style":1,"custom_id":"a2ui:review","label":"Review finding"}]}
+      ]}]}],
+      ["click",{"component_type":2,"custom_id":"a2ui:review"},{"version":"1.0","action":{"name":"reviewFinding","surfaceId":"quarterly-audit","sourceComponentId":"review","context":{"finding":["backup"]}}}],
+      ["rejectUpdate",{"version":"1.0","updateComponents":{"surfaceId":"quarterly-audit","components":[{"id":"root","component":"Column","children":["root"]}]}}],
+      ["apply",{"version":"1.0","updateComponents":{"surfaceId":"quarterly-audit","components":[{"id":"root","component":"Text","text":"Closed"}]}}],
+      ["rejectClick",{"component_type":2,"custom_id":"a2ui:review"}],
+      ["message",{"flags":32768,"allowed_mentions":{"parse":[]},"components":[{"type":17,"components":[{"type":10,"content":"Closed"}]}]}]
+    ]
+  },
+  {
+    "name":"shared model bindings: invalid selection is atomic",
+    "create":{"version":"1.0","createSurface":{"surfaceId":"size","catalogId":"https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json","dataModel":{"size":[]},"components":[
+      {"id":"root","component":"Column","children":["all","limited"]},
+      {"id":"all","component":"ChoicePicker","value":{"@path":"/size"},"options":[{"label":"Small","value":"s"},{"label":"Large","value":"l"}]},
+      {"id":"limited","component":"ChoicePicker","value":{"@path":"/size"},"options":[{"label":"Small","value":"s"}]}
+    ]}},
+    "steps":[
+      ["click",{"component_type":3,"custom_id":"a2ui:all","values":["s"]},null],
+      ["rejectClick",{"component_type":3,"custom_id":"a2ui:all","values":["l"]}],
+      ["rejectUpdate",{"version":"1.0","updateDataModel":{"surfaceId":"size","path":"/size","value":null}}],
+      ["model",{"size":["s"]}]
+    ]
+  },
+  {
+    "name":"default button: root replacement, literal and bound action context",
+    "create":{"version":"1.0","createSurface":{"surfaceId":"form","catalogId":"https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json","dataModel":{"status":"Draft"},"components":[
+      {"id":"root","component":"Button","child":"label","action":{"event":{"name":"submit","userMessage":{"@path":"/status"},"context":{"item":{"kind":"note"},"status":{"@path":"/status"}}}}},
+      {"id":"label","component":"Text","text":"Submit"}
+    ]}},
+    "steps":[
+      ["message",{"flags":32768,"allowed_mentions":{"parse":[]},"components":[{"type":17,"components":[{"type":1,"components":[{"type":2,"style":2,"custom_id":"a2ui:root","label":"Submit"}]}]}]}],
+      ["apply",{"version":"1.0","updateDataModel":{"surfaceId":"form","value":{"status":"Ready","extra":true}}}],
+      ["apply",{"version":"1.0","updateDataModel":{"surfaceId":"form","path":"/extra","value":null}}],
+      ["model",{"status":"Ready"}],
+      ["click",{"component_type":2,"custom_id":"a2ui:root"},{"version":"1.0","action":{"name":"submit","userMessage":"Ready","surfaceId":"form","sourceComponentId":"root","context":{"item":{"kind":"note"},"status":"Ready"}}}],
+      ["rejectUpdate",{"version":"1.0","updateDataModel":{"surfaceId":"other","path":"/status","value":"Wrong"}}],
+      ["rejectUpdate",{"version":"1.0","updateComponents":{"surfaceId":"form","components":[{"id":"label","component":"Text","text":{"@call":"format"}}]}}]
+    ]
+  },
+  {
+    "name":"nested review: multi-select, divider and grouped buttons",
+    "create":{"version":"1.0","createSurface":{
+      "surfaceId":"review","catalogId":"https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json",
+      "dataModel":{"items":[{"tags":["old"]},{"tags":[]}],"labels":{"a/b~c":"Assign"}},
+      "components":[
+        {"id":"root","component":"Column","children":["pickRow","line","actions"]},
+        {"id":"pickRow","component":"Row","children":["tags"]},
+        {"id":"tags","component":"ChoicePicker","variant":"multipleSelection","value":{"@path":"/items/1/tags"},"options":[{"label":"One","value":"a"},{"label":"Two","value":"b"},{"label":"Three","value":"c"}]},
+        {"id":"line","component":"Divider"},
+        {"id":"actions","component":"Row","children":["assign","skip"]},
+        {"id":"skip","component":"Button","child":"skipLabel","action":{"event":{"name":"skip"}}},
+        {"id":"assign","component":"Button","child":"assignLabel","variant":"primary","action":{"event":{"name":"assign","context":{"tags":{"@path":"/items/1/tags"}}}}},
+        {"id":"skipLabel","component":"Text","text":"Skip"},
+        {"id":"assignLabel","component":"Text","text":{"@path":"/labels/a~1b~0c"}}
+      ]}},
+    "steps":[
+      ["click",{"component_type":3,"custom_id":"a2ui:tags","values":["c","a"]},null],
+      ["rejectClick",{"component_type":3,"custom_id":"a2ui:tags","values":["b","b"]}],
+      ["rejectClick",{"component_type":3,"custom_id":"a2ui:tags","values":["b","unknown"]}],
+      ["rejectClick",{"component_type":3,"custom_id":"a2ui:tags","values":[]}],
+      ["apply",{"version":"1.0","updateDataModel":{"surfaceId":"review","path":"/labels/a~1b~0c","value":"Apply tags"}}],
+      ["restore"],
+      ["model",{"items":[{"tags":["old"]},{"tags":["c","a"]}],"labels":{"a/b~c":"Apply tags"}}],
+      ["message",{"flags":32768,"allowed_mentions":{"parse":[]},"components":[{"type":17,"components":[
+        {"type":1,"components":[{"type":3,"custom_id":"a2ui:tags","max_values":3,"options":[{"label":"One","value":"a","default":true},{"label":"Two","value":"b","default":false},{"label":"Three","value":"c","default":true}]}]},
+        {"type":14},
+        {"type":1,"components":[{"type":2,"style":1,"label":"Apply tags","custom_id":"a2ui:assign"},{"type":2,"style":2,"label":"Skip","custom_id":"a2ui:skip"}]}
+      ]}]}],
+      ["click",{"component_type":2,"custom_id":"a2ui:skip"},{"version":"1.0","action":{"surfaceId":"review","sourceComponentId":"skip","name":"skip","context":{}}}],
+      ["click",{"component_type":2,"custom_id":"a2ui:assign"},{"version":"1.0","action":{"surfaceId":"review","sourceComponentId":"assign","name":"assign","context":{"tags":["c","a"]}}}],
+      ["rejectUpdate",{"version":"1.0","updateComponents":{"surfaceId":"review","components":[{"id":"root","component":"Row","children":["assign","tags"]}]}}],
+      ["rejectUpdate",{"version":"1.0","updateComponents":{"surfaceId":"review","components":[{"id":"line","component":"Divider","axis":"vertical"}]}}],
+      ["rejectUpdate",{"version":"1.0","updateDataModel":{"surfaceId":"review","path":"/items/0","value":null}}],
+      ["rejectUpdate",{"version":"1.0","updateDataModel":{"surfaceId":"review","path":"/items/01/tags","value":[]}}],
+      ["rejectUpdate",{"version":"1.0","updateDataModel":{"surfaceId":"review","path":"/labels/bad~2key","value":true}}],
+      ["rejectUpdate",{"version":"1.0","updateDataModel":{"surfaceId":"review","path":"/items/2/tags","value":[]}}],
+      ["apply",{"version":"1.0","updateDataModel":{"surfaceId":"review","path":"/items/1/tags/0","value":null}}],
+      ["apply",{"version":"1.0","updateDataModel":{"surfaceId":"review","path":"/items/1/note","value":"new"}}],
+      ["model",{"items":[{"tags":["old"]},{"tags":["a"],"note":"new"}],"labels":{"a/b~c":"Apply tags"}}]
+    ]
+  },
+  {
+    "name":"image: literal URL, bound attachment and atomic edits",
+    "create":{"version":"1.0","createSurface":{"surfaceId":"chart","catalogId":"https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json","components":[
+      {"id":"root","component":"Image","url":"https://charts.example.org/daily%20totals.png?width=640&scale=2"}
+    ],"dataModel":{"chart":{"url":"attachment://totals.png","alt":"Tuesday: 12 tickets."}}}},
+    "steps":[
+      ["message",{"flags":32768,"allowed_mentions":{"parse":[]},"components":[{"type":17,"components":[{"type":12,"items":[{"media":{"url":"https://charts.example.org/daily%20totals.png?width=640&scale=2"}}]}]}]}],
+      ["apply",{"version":"1.0","updateComponents":{"surfaceId":"chart","components":[{"id":"root","component":"Image","url":{"@path":"/chart/url"},"description":{"@path":"/chart/alt"}}]}}],
+      ["rejectUpdate",{"version":"1.0","updateDataModel":{"surfaceId":"chart","path":"/chart/url","value":"attachment://../totals.png"}}],
+      ["rejectUpdate",{"version":"1.0","updateDataModel":{"surfaceId":"chart","path":"/chart/url","value":"data:image/png;base64,AAAA"}}],
+      ["rejectUpdate",{"version":"1.0","updateDataModel":{"surfaceId":"chart","path":"/chart/alt","value":null}}],
+      ["rejectUpdate",{"version":"1.0","updateComponents":{"surfaceId":"chart","components":[{"id":"root","component":"Image","url":"attachment://totals.png","fit":"cover"}]}}],
+      ["restore"],
+      ["message",{"flags":32768,"allowed_mentions":{"parse":[]},"components":[{"type":17,"components":[{"type":12,"items":[{"media":{"url":"attachment://totals.png"},"description":"Tuesday: 12 tickets."}]}]}]}]
+    ]
+  }
+]

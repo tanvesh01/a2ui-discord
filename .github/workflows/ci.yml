@@ -1,0 +1,52 @@
+name: Test distributions
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.11', '3.12', '3.13', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install build twine
+      - run: python -m build python && python -m twine check --strict python/dist/*
+      - name: Test the installed wheel outside the checkout
+        run: |
+          python -m venv "$RUNNER_TEMP/runtime"
+          source "$RUNNER_TEMP/runtime/bin/activate"
+          python -m pip install --no-index --no-deps python/dist/*.whl
+          python -m pip check
+          cp -r python/examples python/test_adapter.py conformance "$RUNNER_TEMP/"
+          cd "$RUNNER_TEMP"
+          python -m unittest -v test_adapter
+          python conformance/test_contract.py
+          python -m examples.audit --finding backup
+
+  node:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [22, 24, 26]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci --prefix typescript
+      - run: npm pack --pack-destination "$RUNNER_TEMP"
+        working-directory: typescript
+      - name: Test the installed tarball outside the checkout
+        run: |
+          mkdir -p "$RUNNER_TEMP/consumer"
+          cp -r conformance "$RUNNER_TEMP/"
+          cp typescript/test.mjs "$RUNNER_TEMP/consumer/"
+          cd "$RUNNER_TEMP/consumer"
+          npm init -y
+          npm install --offline --ignore-scripts --no-audit --no-fund "$RUNNER_TEMP"/*.tgz
+          node --test test.mjs
+          node -e "if (typeof require('a2ui-discord').Surface !== 'function') process.exit(1)"
