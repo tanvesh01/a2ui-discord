@@ -1,7 +1,7 @@
 {
   "name": "a2ui-discord",
-  "version": "0.1.0-beta.3",
-  "description": "Render a subset of A2UI 1.0 as native Discord Components V2 messages",
+  "version": "0.1.0-beta.4",
+  "description": "Render A2UI 1.0 Basic Catalog surfaces as native Discord Components V2 messages",
   "license": "MIT",
   "author": "tanvesh01",
   "repository": {
@@ -19,6 +19,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./view": {
+      "types": "./dist/view.d.mts",
+      "default": "./dist/view.mjs"
     }
   },
   "files": [
@@ -29,9 +33,18 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "prepack": "npm run build",
-    "test": "npm run build && node --test test.mjs"
+    "test": "npm run build && node --test test.mjs test-view.mjs"
   },
   "devDependencies": {
+    "@a2ui/web_core": "0.16.1",
     "typescript": "5.9.3"
+  },
+  "peerDependencies": {
+    "@a2ui/web_core": "0.16.1"
+  },
+  "peerDependenciesMeta": {
+    "@a2ui/web_core": {
+      "optional": true
+    }
   }
 }

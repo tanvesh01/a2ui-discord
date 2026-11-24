@@ -5,6 +5,7 @@ Keep the wire contract in the [root README](README.md#supported-subset). When ch
 ## Run from a checkout
 
 - Python: in a virtual environment, run `python -m pip install -e ./python` at the repository root. Run `python -m unittest discover -s python` and `python conformance/test_contract.py`.
+- Live Python surface: install `python -m pip install -e './python[protocol]'` and run `python conformance/test_view.py`.
 - TypeScript: run `npm ci --prefix typescript` and `npm test --prefix typescript`. The test builds the library before running the shared cases.
 
 ## Check a release candidate

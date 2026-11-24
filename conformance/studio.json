@@ -1,0 +1,28 @@
+[
+  {"version":"1.0","createSurface":{"surfaceId":"studio","catalogId":"https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json","metadata":{"extensions":{"studio_example":true}},"sendDataModel":true}},
+  {"version":"1.0","updateDataModel":{"surfaceId":"studio","value":{"tracks":[{"title":"Rain","enabled":true},{"title":"Wind","enabled":false}],"title":"","gain":0.25,"when":"2028-02-01","mix":["stereo"],"guide":"https://example.org/studio"}}},
+  {"version":"1.0","updateComponents":{"surfaceId":"studio","components":[
+    {"id":"root","component":"Tabs","tabs":[{"title":"Mix","child":"mix"},{"title":"Preview","child":"media"}]},
+    {"id":"mix","component":"Card","child":"form"},
+    {"id":"form","component":"Column","children":["tracks","line","name","gain","date","channels","controls"]},
+    {"id":"tracks","component":"List","children":{"componentId":"track","path":"/tracks"}},
+    {"id":"track","component":"CheckBox","value":{"@path":"enabled"},"label":{"@call":"formatString","args":{"value":"${@index(offset: 1)}. ${title}"}}},
+    {"id":"line","component":"Divider"},
+    {"id":"name","component":"TextField","value":{"@path":"/title"},"label":"Title","placeholder":"Mix title","variant":"longText"},
+    {"id":"gain","component":"Slider","label":"Gain","min":0,"max":1,"steps":4,"value":{"@path":"/gain"}},
+    {"id":"date","component":"DateTimeInput","label":"Air date","enableDate":true,"min":"2028-02-01","max":"2028-03-01","value":{"@path":"/when"}},
+    {"id":"channels","component":"ChoicePicker","label":"Channels","variant":"multipleSelection","filterable":true,"options":[{"label":"Stereo","value":"stereo"},{"label":"Mono","value":"mono"}],"value":{"@path":"/mix"}},
+    {"id":"controls","component":"Row","children":["save","docs"]},
+    {"id":"save","component":"Button","variant":"primary","child":"saveLabel","@checks":[{"condition":{"@call":"required","args":{"value":{"@path":"/title"}}},"message":"Give the mix a title."}],"action":{"event":{"name":"saveMix","context":{"title":{"@path":"/title"},"wind":{"@path":"/tracks/1/enabled"},"gain":{"@path":"/gain"},"when":{"@path":"/when"},"mix":{"@path":"/mix"}}}}},
+    {"id":"saveLabel","component":"Text","text":"Save mix"},
+    {"id":"docs","component":"Button","child":"docsIcon","action":{"functionCall":{"@call":"openUrl","args":{"url":{"@path":"/guide"}}}}},
+    {"id":"docsIcon","component":"Icon","name":"help","@accessibility":{"label":"Help"}},
+    {"id":"media","component":"Modal","trigger":"previewButton","content":"gallery"},
+    {"id":"previewButton","component":"Button","child":"previewLabel","action":{"event":{"name":"openPreview"}}},
+    {"id":"previewLabel","component":"Text","text":"Preview media"},
+    {"id":"gallery","component":"Column","children":["art","film","sound"]},
+    {"id":"art","component":"Image","url":"attachment://cover.png","description":"Mix cover"},
+    {"id":"film","component":"Video","url":"https://example.org/demo.mp4"},
+    {"id":"sound","component":"AudioPlayer","url":"attachment://sample.ogg","description":"Wind sample"}
+  ]}}
+]

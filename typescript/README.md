@@ -1,8 +1,34 @@
 # a2ui-discord for Node.js
 
-Translate a subset of A2UI 1.0 into native Discord Components V2. Use from TypeScript or JavaScript on Node.js 22+. No Discord SDK, runtime dependencies, or network calls. MIT license.
+Translate A2UI 1.0 into native Discord Components V2 on Node.js 22+. `DiscordView` mounts a live protocol surface. `Surface` handles small cards without runtime dependencies. Neither sends network requests. MIT license.
 
-From this directory run `npm ci` and `npm pack`. Install the resulting package in your app with `npm install /path/to/a2ui-discord-0.1.0-beta.3.tgz`.
+From this directory run `npm ci` and `npm pack`. Install the resulting `.tgz` in your app.
+
+## Mount a live surface
+
+Also install `@a2ui/web_core@0.16.1`. Use the ESM subpath. With TypeScript `moduleResolution: "NodeNext"` or `"Node16"`, set `skipLibCheck: true`: the pinned SDK has two extensionless imports in its legacy declarations. Your application code can still use `strict: true`.
+
+In an app with a copy of the repository's `conformance/studio.json`:
+
+```js
+import { readFileSync } from 'node:fs';
+import { MessageProcessor, basicCatalog } from '@a2ui/web_core/v1_0';
+import { DiscordView } from 'a2ui-discord/view';
+
+const outbox = []; // Application-owned; authorize before dispatch.
+const processor = new MessageProcessor([basicCatalog], undefined, {
+  unifiedOutbound: true, outboundListener: message => { outbox.push(message); },
+});
+processor.processMessages(JSON.parse(readFileSync('conformance/studio.json', 'utf8')));
+const view = new DiscordView(processor.getSurface('studio'));
+const payload = view.message(); // Send once. Keep view under the returned message ID.
+// In an async handler: const reply = await view.interact(verifiedInteraction.data);
+// On retirement: view.dispose(); processor.dispose() when all surfaces are retired.
+```
+
+`interact()` returns the Discord callback; the processor sends A2UI action and RPC envelopes to `outboundListener`. Pass trusted action metadata as the second argument: `{ metadata: { extensions: { ... } } }`. Read `message()` after protocol updates and settled RPCs. See the [coverage and limits](https://github.com/tanvesh01/a2ui-discord#live-a2ui-10-surfaces).
+
+## Render a dependency-free card
 
 ```ts
 import { CATALOG, Surface } from 'a2ui-discord';

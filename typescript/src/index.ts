@@ -1,6 +1,7 @@
+import { imageUrl } from './media.js';
+
 /** The supported A2UI 1.0 basic catalog. No catalog or network resource is fetched. */
 export const CATALOG = 'https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json';
-const imageUrl = /^(?:attachment:\/\/[A-Za-z0-9_-][A-Za-z0-9_.-]*|https:\/\/[A-Za-z0-9]+(?:(?:-+|\.)[A-Za-z0-9]+)*(?:[/?#](?:[A-Za-z0-9._~!$&'()*+,;=:@/?#-]|%[0-9A-Fa-f]{2})*)?)$/u;
 
 type Json = null | boolean | number | string | Json[] | Obj;
 type Obj = { [key: string]: Json };

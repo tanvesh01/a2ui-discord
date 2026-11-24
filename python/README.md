@@ -1,6 +1,30 @@
 # a2ui-discord
 
-A small Python library that renders [A2UI 1.0](https://a2ui.org/specification/v1.0-a2ui/) cards as native [Discord Components V2](https://docs.discord.com/developers/components/using-message-components) messages. A dropdown changes the card's model; a button returns an action for your agent. No Activity, bot framework, runtime dependencies, or network calls. MIT license. Python 3.11+.
+A Python library that renders [A2UI 1.0](https://a2ui.org/specification/v1.0-a2ui/) as native [Discord Components V2](https://docs.discord.com/developers/components/using-message-components). `DiscordView` mounts a live protocol surface; `Surface` handles small cards without runtime dependencies. Neither sends network requests. MIT license. Python 3.11+.
+
+## Mount a live surface
+
+Install `python -m pip install '.[protocol]'` from this directory. From the repository root:
+
+```python
+import json
+from pathlib import Path
+from a2ui.core.basic_catalog.v1_0 import BasicCatalog
+from a2ui.core.processing import MessageProcessor, MessageProcessorOptions
+from a2ui_discord.view import DiscordView
+
+outbox = []  # Application-owned; never forward a function call without authorization.
+processor = MessageProcessor([BasicCatalog()],
+    action_handler=lambda action: outbox.append({'version': '1.0', 'action': action}),
+    options=MessageProcessorOptions(outbound_listener=outbox.append))
+processor.process_messages(json.loads(Path('conformance/studio.json').read_text()))
+view = DiscordView(processor.model.get_surface('studio'))
+payload = view.message()  # Send once. Keep view under the returned message ID.
+# In an async handler: reply = await view.interact(verified_interaction['data'])
+# On retirement: view.dispose(); processor.dispose() when all surfaces are retired.
+```
+
+`interact()` returns a Discord callback, not an A2UI action. The processor emits actions to `action_handler`. Use `outbound_listener` for RPC; subscribe to SDK error events for diagnostics. Run agent RPC on an event loop. When the answer settles, read `message()` again and edit the original message. Pass trusted action metadata with `metadata={'extensions': {...}}` on `interact()`, not inside Discord input. The [coverage table](https://github.com/tanvesh01/a2ui-discord#live-a2ui-10-surfaces) lists native fallbacks. The rest of this guide describes the smaller `Surface` interface.
 
 ## Install and render
 

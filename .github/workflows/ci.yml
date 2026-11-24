@@ -26,6 +26,10 @@ jobs:
           python -m unittest -v test_adapter
           python conformance/test_contract.py
           python -m examples.audit --finding backup
+          wheel=("$GITHUB_WORKSPACE"/python/dist/*.whl)
+          python -m pip install "${wheel[0]}[protocol]"
+          python -m pip check
+          python conformance/test_view.py
 
   node:
     runs-on: ubuntu-latest
@@ -44,9 +48,11 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/consumer"
           cp -r conformance "$RUNNER_TEMP/"
-          cp typescript/test.mjs "$RUNNER_TEMP/consumer/"
+          cp typescript/test.mjs typescript/test-view.mjs "$RUNNER_TEMP/consumer/"
           cd "$RUNNER_TEMP/consumer"
           npm init -y
           npm install --offline --ignore-scripts --no-audit --no-fund "$RUNNER_TEMP"/*.tgz
           node --test test.mjs
           node -e "if (typeof require('a2ui-discord').Surface !== 'function') process.exit(1)"
+          npm install --ignore-scripts --no-audit --no-fund @a2ui/web_core@0.16.1
+          node --test test-view.mjs

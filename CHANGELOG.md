@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased — Python 0.1.0b4 / TypeScript 0.1.0-beta.4
+
+- Mount a live A2UI 1.0 surface with `DiscordView` and the optional official SDK. Render all 18 Basic Catalog component types using the [documented Discord mappings](README.md#live-a2ui-10-surfaces).
+- Use SDK-scoped bindings, templates, checks, actions, and RPC. Keep the dependency-free `Surface` API for snapshot-backed cards.
+
 ## Python 0.1.0b3 / TypeScript 0.1.0-beta.3
 
 - Render `Image` as a Discord media gallery item with a literal or bound URL and optional alt text. The bot supplies any attachment; the renderer does no I/O.
