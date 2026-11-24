@@ -1,8 +1,10 @@
+![A2UI × Discord](docs/assets/readme-banner.svg)
+
 # a2ui-discord
 
-Render [A2UI 1.0](https://a2ui.org/specification/v1.0-a2ui/) cards as native [Discord Components V2](https://docs.discord.com/developers/components/reference) messages. A dropdown edits the card's model. A button returns an action with the current values. Your bot owns transport, storage, authorization and dispatch.
+Turn [A2UI 1.0](https://a2ui.org/specification/v1.0-a2ui/) JSON into interactive Discord messages in Python or TypeScript. For example, a reader can switch a chart from bars to a line with a dropdown, without leaving the message.
 
-Choose **one** package. Both are native implementations under the MIT license. Neither has runtime dependencies or requires the other language.
+The library renders a subset of A2UI as native [Discord components](https://docs.discord.com/developers/components/reference) and turns button clicks into actions. Your bot sends the messages, checks permissions, and handles those actions. Choose either MIT-licensed package; neither has runtime dependencies.
 
 | Package | Runtime | Install from this checkout |
 |---|---|---|
